@@ -11,7 +11,7 @@ export function fetchProductsByFilter(filter) {
   //filter object
   let queryString = '';
   for(let key in filter){
-    queryString += `${key}=${filter[key]}`
+    queryString += `${key}=${filter[key]}&`
   }
 
   return new Promise(async(resolve) =>{
