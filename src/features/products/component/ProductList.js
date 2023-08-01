@@ -12,14 +12,12 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllProducts,fetchAllProductsAsync } from "../productSlice";
+import { selectAllProducts, fetchAllProductsAsync, fetchProductsByFilterAsync } from "../productSlice";
 
 const sortOptions = [
-  { name: "Most Popular", href: "#", current: true },
-  { name: "Best Rating", href: "#", current: false },
-  { name: "Newest", href: "#", current: false },
-  { name: "Price: Low to High", href: "#", current: false },
-  { name: "Price: High to Low", href: "#", current: false },
+  { name: "Best Rating", sort:'rating', current: false },
+  { name: "Price: Low to High", sort:'price', current: false },
+  { name: "Price: High to Low", sort:'price', current: false },
 ];
 
 const filters = [
@@ -39,26 +37,16 @@ const filters = [
     id: "category",
     name: "Category",
     options: [
-      { value: "new-arrivals", label: "New Arrivals", checked: false },
-      { value: "sale", label: "Sale", checked: false },
-      { value: "travel", label: "Travel", checked: true },
-      { value: "organization", label: "Organization", checked: false },
-      { value: "accessories", label: "Accessories", checked: false },
-    ],
-  },
-  {
-    id: "size",
-    name: "Size",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
+      { value: "smartphones", label: "smartphones", checked: false },
+      { value: "laptops", label: "laptops", checked: false },
+      { value: "fragrances", label: "fragrances", checked: true },
+      { value: "skincare", label: "skincare", checked: false },
+      { value: "groceries", label: "groceries", checked: false },
+      { value: "home-decoration", label: "home-decoration", checked: false },
     ],
   },
 ];
+
 //this is for Pagination
 const items = [
   {
@@ -88,14 +76,24 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+//fucntion starts
 function ProductList() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const products = useSelector(selectAllProducts);
   const dispatch = useDispatch();
-  
-  useEffect(()=>{
-    dispatch(fetchAllProductsAsync())
-  },[dispatch])
+  const [filter,setFilter] = useState({});
+
+  const handleFilter = (e, section, option) => {
+    const newFilter = {...filter,[section.id]:option.value};
+    setFilter(newFilter)
+    
+    dispatch(fetchProductsByFilterAsync(newFilter));
+    console.log(section.id , option.value)
+  };
+
+  useEffect(() => {
+    dispatch(fetchAllProductsAsync());
+  }, [dispatch]);
 
   return (
     <Fragment>
@@ -325,6 +323,9 @@ function ProductList() {
                                     name={`${section.id}[]`}
                                     defaultValue={option.value}
                                     type="checkbox"
+                                    onChange={(e) =>
+                                      handleFilter(e, section, option)
+                                    }
                                     defaultChecked={option.checked}
                                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                   />
@@ -352,7 +353,10 @@ function ProductList() {
                       <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                         {products.map((product) => (
                           <Link to="/details">
-                            <div key={product.id} className="group relative border-solid border-2 p-2 border-black-200">
+                            <div
+                              key={product.id}
+                              className="group relative border-solid border-2 p-2 border-black-200"
+                            >
                               <div className="min-h-60 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
                                 <img
                                   src={product.thumbnail}
@@ -380,13 +384,14 @@ function ProductList() {
                                 </div>
                                 <div>
                                   <p className="text-sm font-medium text-gray-900">
-                                    ${Math.round(
+                                    $
+                                    {Math.round(
                                       product.price *
                                         (1 - product.discountPercentage / 100)
                                     )}
                                   </p>
                                   <p className="text-sm font-medium line-through text-gray-500">
-                                    ${product.price}                                    
+                                    ${product.price}
                                   </p>
                                 </div>
                               </div>
