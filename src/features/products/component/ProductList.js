@@ -22,7 +22,7 @@ import { ITEMS_PER_PAGE } from "../../../app/constants";
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
   { name: "Price: Low to High", sort: "price", order: "asc", current: false },
-  { name: "Price: High to Low", sort: "price", order: "desc", current: false },
+  { name: "Price: High to Low", sort: "price", order: "desc ", current: false },
 ];
 
 const filters = [
@@ -129,6 +129,11 @@ function ProductList() {
     const pagination = { _page: page, _limit: ITEMS_PER_PAGE };
     dispatch(fetchProductsByFilterAsync({ filter, sort, pagination }));
   }, [dispatch, filter, sort, page]);
+
+  useEffect(()=>{
+    setPage(1)
+  },[totalItems,sort])
+
 
   return (
     <Fragment>
@@ -448,12 +453,10 @@ const Pagination = ({ handlePage, page, setPage, totalItems }) => {
             <span className="font-medium">
               {(page - 1) * ITEMS_PER_PAGE + 1}
             </span>{" "}
-            to{" "}
+            to{' '}
             <span className="font-medium">
-              {page * ITEMS_PER_PAGE > totalItems
-                ? totalItems
-                : page * ITEMS_PER_PAGE > totalItems}
-            </span>{" "}
+              {page * ITEMS_PER_PAGE > totalItems ? totalItems : page * ITEMS_PER_PAGE }
+            </span> {" "}
             of <span className="font-medium">{totalItems}</span> results
           </p>
         </div>
