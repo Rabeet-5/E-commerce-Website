@@ -11,7 +11,7 @@ export function fetchProductsByFilter(filter,sort) {
   let queryString = "";
   for (let key in filter) {
     const categoryValues = filter[key];
-    if (categoryValues.length > 1) {
+    if (categoryValues.length>1) {
       const lastCategoryvalues = categoryValues[categoryValues.length - 1];
       queryString += `${key}=${lastCategoryvalues}&`;
     }
