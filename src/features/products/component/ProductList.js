@@ -86,35 +86,44 @@ function ProductList() {
   const dispatch = useDispatch();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [filter, setFilter] = useState({});
+  const [sort, setSort] = useState({});
 
 
   const handleFilter = (e, section, option) => {
     console.log(option.checked)
     const newFilter = { ...filter };
     if(e.target.checked){
-        newFilter[section.id] = option.value
+
+      if(newFilter[section.id]){
+        newFilter[section.id].push(option.value)
+      }
+      else{
+        newFilter[section.id] = [option.value]
+      }
+
     }else{
-      delete newFilter[section.id]
+      const index = newFilter[section.id].findIndex(el=>el===option.value) ;
+      if (index !== -1) {
+        newFilter[section.id].splice(index, 1);
+      }
     }
     
+    console.log({newFilter});
     setFilter(newFilter);
-    console.log(section.id, option.value);
   };
   
-
+  
   const handleSort = (e, option) => {
-    // const sort = { _sort: option.sort, _order: option.order };
-
-    const newFilter = { ...filter, _sort: option.sort, _option: option.sort };
-    setFilter(newFilter);
-
-    dispatch(fetchProductsByFilterAsync(newFilter));
+    
+    const sort = {  _sort: option.sort, _option: option.sort };
+    setSort(sort);
+    console.log({sort});
   };
 
   useEffect(() => { 
-    dispatch(fetchProductsByFilterAsync(filter));
+    dispatch(fetchProductsByFilterAsync({filter,sort}));
 
-  }, [dispatch,filter]);
+  }, [dispatch,filter,sort]);
 
   return (
     <Fragment>
@@ -122,7 +131,7 @@ function ProductList() {
         <div>
           {/* Mobile filter dialog */}
           <MobileFilter mobileFiltersOpen={mobileFiltersOpen} setMobileFiltersOpen={setMobileFiltersOpen} 
-            handleFilter={handleFilter}
+            handleFilter={handleFilter} handleSort={handleSort}
           />
 
           <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -223,7 +232,7 @@ function ProductList() {
 
 export default ProductList;
 
-const MobileFilter = ({mobileFiltersOpen,setMobileFiltersOpen ,handleFilter})=>{
+const MobileFilter = ({mobileFiltersOpen,setMobileFiltersOpen ,handleFilter ,handleSort})=>{
   
 
     return <>
@@ -339,8 +348,6 @@ const MobileFilter = ({mobileFiltersOpen,setMobileFiltersOpen ,handleFilter})=>{
     </>
 }
 const DesktopFilter = ({handleFilter,mobileFiltersOpen,setMobileFiltersOpen })=>{
-  const dispatch = useDispatch()
-
 
   return <>
      <form className="hidden lg:block">
