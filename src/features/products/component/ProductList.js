@@ -16,6 +16,8 @@ import {
   selectAllProducts,
   fetchProductsByFilterAsync,
   selectTotalItems,
+  selectBrands,
+  selectCategories,
 } from "../productSlice";
 import { ITEMS_PER_PAGE } from "../../../app/constants";
 
@@ -25,32 +27,6 @@ const sortOptions = [
   { name: "Price: High to Low", sort: "price", order: "desc ", current: false },
 ];
 
-const filters = [
-  {
-    id: "color",
-    name: "Color",
-    options: [
-      { value: "white", label: "White", checked: false },
-      { value: "beige", label: "Beige", checked: false },
-      { value: "blue", label: "Blue", checked: true },
-      { value: "brown", label: "Brown", checked: false },
-      { value: "green", label: "Green", checked: false },
-      { value: "purple", label: "Purple", checked: false },
-    ],
-  },
-  {
-    id: "category",
-    name: "Category",
-    options: [
-      { value: "smartphones", label: "smartphones", checked: false },
-      { value: "laptops", label: "laptops", checked: false },
-      { value: "fragrances", label: "fragrances", checked: true },
-      { value: "skincare", label: "skincare", checked: false },
-      { value: "groceries", label: "groceries", checked: false },
-      { value: "home-decoration", label: "home-decoration", checked: false },
-    ],
-  },
-];
 
 //this is for Pagination
 const items = [
@@ -85,11 +61,27 @@ function classNames(...classes) {
 function ProductList() {
   const products = useSelector(selectAllProducts);
   const totalItems = useSelector(selectTotalItems);
+  const brands = useSelector(selectBrands);
+  const categories = useSelector(selectCategories);
+
   const dispatch = useDispatch();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [filter, setFilter] = useState({});
   const [sort, setSort] = useState({});
   const [page, setPage] = useState(1);
+
+  const filters = [
+    {
+      id: "brands",
+      name: "Brands",
+      options:brands
+    },
+    {
+      id: "category",
+      name: "Category",
+      options: categories 
+    },
+  ];
 
   const handleFilter = (e, section, option) => {
     console.log(e.target.checked);
@@ -145,6 +137,7 @@ function ProductList() {
             setMobileFiltersOpen={setMobileFiltersOpen}
             handleFilter={handleFilter}
             handleSort={handleSort}
+            filters={filters}
           />
 
           <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -220,7 +213,10 @@ function ProductList() {
             <section aria-labelledby="products-heading" className="pb-24 pt-6">
               <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
                 {/* Filters */}
-                <DesktopFilter handleFilter={handleFilter} />
+                <DesktopFilter  
+                handleFilter={handleFilter}
+                filters={filters}
+                />
 
                 {/* Product grid */}
                 {/* //Product list  */}
@@ -253,6 +249,7 @@ const MobileFilter = ({
   setMobileFiltersOpen,
   handleFilter,
   handleSort,
+  filters
 }) => {
   return (
     <>
@@ -368,10 +365,10 @@ const MobileFilter = ({
     </>
   );
 };
+
 const DesktopFilter = ({
   handleFilter,
-  mobileFiltersOpen,
-  setMobileFiltersOpen,
+  filters
 }) => {
   return (
     <>
@@ -429,7 +426,8 @@ const DesktopFilter = ({
     </>
   );
 };
-const Pagination = ({ handlePage, page, setPage, totalItems }) => {
+
+const Pagination = ({ handlePage, page, setPage, totalItems,filters }) => {
   return (
     <>
       <div className="flex flex-1 justify-between sm:hidden">
@@ -506,7 +504,8 @@ const Pagination = ({ handlePage, page, setPage, totalItems }) => {
     </>
   );
 };
-const ProductGrid = ({ products }) => {
+
+const ProductGrid = ({ products,filters }) => {
   return (
     <>
       <div className="bg-white">
