@@ -23,6 +23,13 @@ const sizes = [
   { name: "3XL", inStock: true },
 ];
 
+const highlights = [
+  'Hand cut and sewn Locally',
+  'Dyed with our Property Color',  
+  'Pre-washed and Pre-shrinked', 
+  'Ultra-soft 100% cotton', 
+]
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -301,8 +308,7 @@ export default function ProductDetails() {
 
                 <div className="mt-4">
                   <ul role="list" className="list-disc space-y-2 pl-4 text-sm">
-                    {product.highlights &&
-                      product.highlights.map((highlight) => (
+                    {highlights.map((highlight) => (
                         <li key={highlight} className="text-gray-400">
                           <span className="text-gray-600">{highlight}</span>
                         </li>
@@ -313,9 +319,8 @@ export default function ProductDetails() {
 
               <div className="mt-10">
                 <h2 className="text-sm font-medium text-gray-900">Details</h2>
-
                 <div className="mt-4 space-y-6">
-                  <p className="text-sm text-gray-600">{product.discription}</p>
+                  <p className="text-sm text-gray-600">{product.description}</p>
                 </div>
               </div>
             </div>
