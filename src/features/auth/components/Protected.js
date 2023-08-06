@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectLoggedInUser } from '../authSlice';
-import { useNavigate } from 'react-router-dom';
+import { Navigate} from 'react-router-dom';
 
 const Protected = ({ children }) => {
-  const navigate = useNavigate();
   const user = useSelector(selectLoggedInUser);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
+    if(!user){
+        return <Navigate to='/login' replace={true}></Navigate>
     }
-  }, [user, navigate]);
+
 
   return children;
 };
